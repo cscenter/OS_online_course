@@ -1,0 +1,11 @@
+*.vrb
+*.toc
+*.snm
+*.out
+*.nav
+*.log
+*.aux
+
+*.cmd
+*.o
+*/.tmp_versions/
