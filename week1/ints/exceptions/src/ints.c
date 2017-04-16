@@ -67,7 +67,7 @@ static void handle_exception(struct frame *frame, int exception)
 	const uintptr_t stack_top = stack_bottom + PAGE_SIZE;
 
 
-	printf("Unhandled exception %d at 0%llx\n", exception, frame->rip);
+	printf("Unhandled exception %d at 0x%llx\n", exception, frame->rip);
 	printf("Backtrace Begin:\n");
 	backtrace(frame->rbp, stack_bottom, stack_top);
 	printf("Backtrace End.\n");
