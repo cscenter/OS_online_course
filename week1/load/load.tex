@@ -1,0 +1,160 @@
+\begin{frame}
+\frametitle{Первая инструкция}
+\begin{itemize}
+    \item<1->Откуда берется первая инструкция?
+    \begin{itemize}
+        \item<2->x86 обращается по адресу \emph{0xFFFFFFF0};
+        \item<3->отвечает ему \emph{материнская карта}.
+    \end{itemize}
+    \item<4->Какой код материнская карта отдает процессору?
+    \begin{itemize}
+        \item BIOS (Basic Input/Output System) - наследство \emph{IBM PC};
+        \item UEFI (Unified Extensible Firmware Interface).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{BIOS}
+\begin{itemize}
+    \item<1-> POST (Power-On Self-Test)
+    \begin{itemize}
+        \item<1-> проверяет, что все на месте и "работает";
+        \item<1-> может выполнять начальную инициализацию устройств;
+        \item<2-> ищет загрузочное устройство (диск в ОС).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Загрузочное устройство}
+\begin{itemize}
+    \item<1->BIOS ищет диск, с которого можно прочитать первые 512 байт
+    \begin{itemize}
+        \item<1->a. k. a. загрузочный сектор;
+        \item<2->последние 2 байта сектора должны хранить числа \emph{0x55}
+        и \emph{0xAA};
+        \item<3->сектор загружается в память по физическому адресу
+        \emph{0x7c00}.
+    \end{itemize}
+    \item<4->BIOS передает управление по физическому адресу \emph{0x7c00}
+    \begin{itemize}
+        \item мы добрались до места, где мы можем на что-то повлиять.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Окружение}
+\begin{itemize}
+    \item<1->Что нам известно о состоянии системы?
+    \begin{itemize}
+        \item<2->наш код начинается по физическому адресу \emph{0x7c00};
+        \item<3->устройства как-то инициализированы и прерывания отключены;
+        \item<4->процессор работает в \emph{Real Mode}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Real Mode}
+\begin{itemize}
+    \item<1->Логический адрес состоит из двух частей:
+    \begin{itemize}
+        \item<1->16-битного сегмента (\emph{SEG}) и 16-битного смещения
+        (\emph{OFF});
+        \item<2->физический адрес получается по формуле
+        $\left(SEG * 16 + OFF\right) mod 2^{20}$.
+    \end{itemize}
+    \item<3->Сегмент хранится в одном из специальных регистров:
+    \begin{itemize}
+        \item \emph{CS}, \emph{DS}, \emph{SS}, \emph{ES}, \emph{FS}, \emph{GS}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Real Mode}
+\begin{itemize}
+    \item<1->Регистры общего назначения 16-битные:
+    \begin{itemize}
+        \item \emph{SP} - указатель стека;
+        \item \emph{BP} - указатель "базы";
+        \item \emph{AX}, \emph{BX}, \emph{CX}, \emph{DX}, \emph{SI}, \emph{DI}.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Hello, World!}
+\begin{lstlisting}
+	.code16
+	.text
+	.global start
+start:
+	ljmp 0x0, $real_start
+real_start:
+	movw $0, %ax
+	movw %ax, %ds
+	movw %ax, %ss
+
+	movw $0x7c00, %sp
+	addw $0x0400, %sp
+	...
+loop:	jmp loop
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Hello, World!}
+\begin{lstlisting}
+	movw $0xB800, %ax
+	movw %ax, %es
+	movw $data, %si
+	movw $0, %di
+	movw size, %cx
+	call memcpy
+
+	...
+
+data:
+	.asciz "H\017e\017l\017l\017o\017!\017"
+size:
+	.short . - data
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Hello, World!}
+\begin{lstlisting}
+memcpy:
+	cmpw $0, %cx
+	jz out
+next:
+	movb (%si), %ah
+	movb %ah, %es:(%di)
+	incw %si
+	incw %di
+	decw %cx
+	jnz next
+out:
+	ret
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+\frametitle{Начальный загрузчик}
+\begin{itemize}
+    \item<1->Как много кода можно поместить в первые 510 байт?
+    \begin{itemize}
+        \item<1-> вряд ли туда поместится целая современная ОС;
+        \item<2-> задача этого кода прочитать с диска код не
+        поместившийся в первые 510 байт.
+    \end{itemize}
+    \item<3->Оставшийся код может быть кодом ОС,
+    \begin{itemize}
+        \item<3->а может быть кодом (вторичного) загрузчика;
+        \item<4->например, GRUB.
+    \end{itemize}
+\end{itemize}
+\end{frame}

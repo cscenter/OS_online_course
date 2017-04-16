@@ -1,0 +1,32 @@
+\begin{frame}
+\frametitle{Соглашения}
+\begin{itemize}
+    \item<1->ABI (Application Binary Interface) - набор соглашений
+    \begin{itemize}
+        \item<2->как в функцию передаются параметры;
+        \item<3->как функция возвращает значения;
+        \item<4->какие регистры функция должна \\
+        сохранить, а какие может испортить;
+        \item<4->и многое другое.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Различные ABI}
+\begin{itemize}
+    \item<1-> Разные компиляторы используют различные ABI:
+    \begin{itemize}
+        \item например, Microsoft используют свой \\
+        собственный
+        \href{https://msdn.microsoft.com/en-us/library/7kcdt6fy.aspx}{ABI};
+        \item Unix-like системы, зачастую, используют \\
+        \href{https://software.intel.com/sites/default/files/article/402129/mpx-linux64-abi.pdf}{System V ABI}.
+    \end{itemize}
+    \item<2-> Мы будем использовать System V ABI
+    \begin{itemize}
+        \item<3->скачайте ABI и найдите, как в \\
+        функцию передаются параметры.
+    \end{itemize}
+\end{itemize}
+\end{frame}

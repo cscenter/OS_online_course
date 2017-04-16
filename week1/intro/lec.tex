@@ -1,0 +1,37 @@
+\documentclass[handout,12pt]{beamer}
+
+\hypersetup{colorlinks=true,linkcolor=red}
+\usetheme{boxes}
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian,english]{babel}
+\usepackage[T2A]{fontenc}
+\usepackage{hyperref}
+\usepackage[final]{listings}
+\usepackage{breakurl}
+\usepackage{cite}
+\usepackage{perpage}
+
+\graphicspath{{img/}}
+
+\def\Url\Breaks{\do\/\do-}
+\lstset{
+  frame=single,
+  breaklines=true,
+  basicstyle=\small,
+  postbreak=\rasebox{0ex}{\ensuremath{\hookrightarrow\space}},
+  numbers=left
+}
+
+\MakePerPage{footnote}
+
+\title{Операционные Системы}
+\subtitle{Введение}
+\date{\today}
+
+\begin{document}
+  \begin{frame}
+    \titlepage
+  \end{frame}
+  \input{intro}
+\end{document}
