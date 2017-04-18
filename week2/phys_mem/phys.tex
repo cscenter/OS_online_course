@@ -1,0 +1,47 @@
+\begin{frame}
+\frametitle{Физическая и логическая память}
+\begin{itemize}
+    \item<1-> Логическая память - как видит память программа.
+    \item<2-> Физическая память - как процессор видит память
+    \begin{itemize}
+        \item<3-> логические адреса отображаются на физические;
+        \item<4-> все что соблюдает интерфейс выглядит как \\
+        физическая память.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Физическая память}
+\begin{itemize}
+    \item<1-> Не все физические адреса соответствуют памяти
+    \begin{itemize}
+        \item<1-> видеобуфер и другие устройства;
+        \item<2-> "дыры".
+    \end{itemize}
+    \item<3-> Физическое адресное пространство может быть \\
+    устроено довольно сложно
+    \begin{itemize}
+        \item без карты памяти не разобраться.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Карта физической памяти}
+\begin{itemize}
+    \item<1->Откда брать карту физической памяти?
+    \begin{itemize}
+        \item<2->из документации аппартной платформы;
+        \item<3->спросить BIOS/UEFI/etc:
+        \begin{itemize}
+            \item BIOS: прерывание 0x15, команда 0xe820;
+            \item UEFI: функция GetMemoryMap;
+        \end{itemize}
+        \item<4->спросить загрузчик
+        \begin{itemize}
+            \item GRUB поддерживает спецификацию multiboot.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
