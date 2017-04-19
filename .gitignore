@@ -8,4 +8,7 @@
 
 *.cmd
 *.o
+*.d
 */.tmp_versions/
+intentry.S
+kernel
