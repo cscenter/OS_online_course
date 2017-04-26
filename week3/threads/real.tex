@@ -1,0 +1,39 @@
+\begin{frame}
+\frametitle{Планировщик Windows}
+\begin{itemize}
+    \item<1->Потокам в Windows назначен приоритет
+    \begin{itemize}
+        \item<1->приоритет состоит из класса и приоритета внутри класса.
+    \end{itemize}
+    \item<2->На исполнение выбирается поток с наивысшим приоритетом
+    \begin{itemize}
+        \item<3->для потоков с равными приоритетами используется RR.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Priority Boost}
+\begin{itemize}
+    \item<1->Чтобы избежать неограниченного голодания потоков Windows иногда
+         повышает им приоритет:
+    \begin{itemize}
+        \item<2->если поток отвечает за видимую часть UI;
+        \item<3->при получении ввода или завершении операции IO;
+        \item<4->для "случайно" выбранных потоков.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Планировщик Linux (один из)}
+\begin{itemize}
+    \item<1->Completely Fair Scheduler (CFS) - честный планировщик:
+    \begin{itemize}
+        \item<2->для каждого потока поддерживается "виртуальное время";
+        \item<3->"виртуальное время" увеличивается, когда поток работает;
+        \item<4->CPU отдаем потоку с наименьшим "виртуальным временем".
+    \end{itemize}
+\end{itemize}
+\end{frame}
