@@ -121,20 +121,12 @@ void paging_setup(void)
 
 	pte_t *pt = va(phys);
 
-	const size_t count = balloc_ranges();
+	const uintptr_t e = balloc_phys_mem() & mask;
+	const uintptr_t b = 0;
 
-	for (size_t i = 0; i != count; ++i) {
-		struct balloc_range range;
-
-		balloc_get_range(i, &range);
-
-		const uintptr_t b = range.begin & mask;
-		const uintptr_t e = (range.end + PAGE_SIZE - 1) & mask;
-
-		printf("map [0x%llx-0x%llx]\n", (unsigned long long)b,
-					(unsigned long long)e);
-		pt_map(pt, HIGHER_BASE + b, e - b, b, PTE_WRITE);
-	}
+	printf("map [0x%llx-0x%llx]\n", (unsigned long long)b,
+				(unsigned long long)e);
+	pt_map(pt, HIGHER_BASE + b, e - b, b, PTE_WRITE);
 
 	pt_map(pt, VIRTUAL_BASE, 2 * gb, 0, PTE_WRITE);
 	cr3_write(phys);

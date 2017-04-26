@@ -187,12 +187,11 @@ void balloc_setup(const struct multiboot_info *info)
 	balloc_remove_range(&free, kernel_begin, kernel_end);
 
 	/**
-	 * Drop the first 1MB of physical memory all together - it's
-	 * BIOS's area and known to be tricky. So mark it as a reserved
-	 * area. Also we can interpret zero physical address as an invalid.
+	 * Drop the first 4Kb so that we can interpret 0 physical
+	 * address as invalid
 	 **/
-	balloc_add_range(&all, 0, 1024 * 1024);
-	balloc_remove_range(&free, 0, 1024 * 1024);
+	balloc_add_range(&all, 0, 4096);
+	balloc_remove_range(&free, 0, 4096);
 
 	/* Print free physical ranges as a "proof" we did everything well. */
 	printf("Free memory ranges:\n");
