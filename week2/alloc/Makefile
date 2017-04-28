@@ -1,9 +1,14 @@
 SRC := $(wildcard ./*.tex)
+SRCS := $(filter-out lecv.tex, $(SRC))
+SRCV := $(filter-out lev.tex, $(SRC))
 IMG := $(wildcard ./img/*.png)
 
-all: lec.pdf
+all: lec.pdf lecv.pdf
 
-lec.pdf: $(SRC) $(IMG)
+lecv.pdf: $(SRCV) $(IMG)
+	pdflatex lecv
+
+lec.pdf: $(SRCS) $(IMG)
 	pdflatex lec
 
 .PHONY: clean
