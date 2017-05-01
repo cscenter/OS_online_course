@@ -1,0 +1,58 @@
+\begin{frame}
+\frametitle{Разделение на читателей и писателей}
+\begin{itemize}
+    \item<1->Не все запросы к разделяемым данным одинаковы
+    \begin{itemize}
+        \item<2->есть запросы, которые модифицируют данные;
+        \item<3->есть запросы, которые только читают данные.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Разделение на читателей и писателей}
+\begin{lstlisting}
+    struct rwlock {
+        atomic_uint ticket;
+        atomic_uint write;
+        atomic_uint read;
+    };
+
+    void read_lock(struct rwlock *lock)
+    {
+        const unsigned ticket = atomic_fetch_add(&lock->ticket, 1);
+
+        while (atomic_load(&lock->read) != ticket);
+        atomic_store(&lock->read, ticket + 1);
+    }
+
+    void read_unlock(struct rwlock *lock)
+    {
+        atomic_fetch_add(&lock->write, 1);
+    }
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Разделение на читателей и писателей}
+\begin{lstlisting}
+    struct rwlock {
+        atomic_uint ticket;
+        atomic_uint write;
+        atomic_uint read;
+    };
+
+    void write_lock(struct rwlock *lock)
+    {
+        const unsigned ticket = atomic_fetch_add(&lock->ticket, 1);
+
+        while (atomic_load(&lock->write) != ticket);
+    }
+
+    void write_unlock(struct rwlock *lock)
+    {
+        atomic_fetch_add(&lock->read, 1);
+        atomic_fetch_add(&lock->write, 1);
+    }
+\end{lstlisting}
+\end{frame}

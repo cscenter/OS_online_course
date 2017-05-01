@@ -1,0 +1,253 @@
+\begin{frame}[fragile]
+\frametitle{Пример}
+    \begin{columns}
+        \begin{column}{.4\textwidth}
+            \begin{lstlisting}
+    .data
+counter:
+    .int 0
+
+    .text
+add_one:
+    movq counter, %rax
+    inc %rax
+    movq rax, counter
+    retq
+            \end{lstlisting}
+        \end{column}
+        \begin{column}{.4\textwidth}
+            \begin{lstlisting}
+int counter;
+
+int add_one(void)
+{
+    return ++counter;
+}	
+            \end{lstlisting}
+        \end{column}
+        \begin{column}{.2\textwidth}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Вариант 1}
+\begin{columns}
+    \begin{column}{.35\textwidth}
+        \begin{lstlisting}
+movq counter, %rax
+inc %rax
+movq rax, counter
+ 
+ 
+ 
+        \end{lstlisting}
+    \end{column}
+    \begin{column}{.35\textwidth}
+        \begin{lstlisting}
+ 
+ 
+ 
+movq counter, %rax
+inc %rax
+movq rax, counter
+        \end{lstlisting}
+    \end{column}
+    \begin{column}{.3\textwidth}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Вариант 2}
+\begin{columns}
+    \begin{column}{.35\textwidth}
+        \begin{lstlisting}
+movq counter, %rax
+
+inc %rax
+movq rax, counter
+ 
+ 
+        \end{lstlisting}
+    \end{column}
+    \begin{column}{.35\textwidth}
+        \begin{lstlisting}
+ 
+movq counter, %rax
+ 
+ 
+inc %rax
+movq rax, counter
+        \end{lstlisting}
+    \end{column}
+    \begin{column}{.3\textwidth}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Состояние гонки}
+\begin{itemize}
+    \item<1->Состояние гонки - результат зависит от порядка выполнения
+         инструкций
+    \begin{itemize}
+        \item<2->порядок зависит от слишком многих факторов;
+        \item<3->решения планировщика, влияние других потоков, прерывания...
+        \item<4->могут быть трудно воспроизводимы - не поддаются тестированию.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Критическая секция}
+\begin{itemize}
+    \item<1->Критическая секция
+    \begin{itemize}
+        \item<2->участок кода обращающийся к разделяемым несколькими потоками
+             данным;
+        \item<3->если не более чем один поток может одновременно находится в
+             критической секции, то не будет состояния гонки.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Блокировка}
+\begin{itemize}
+    \item<1->Блокировка (lock) - некоторый объект и пара методов для работы с
+         ним
+    \begin{itemize}
+        \item<2->lock - метод захвата блокировки;
+        \item<3->unlock - метод освобождения блокировки.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Свойство взаимного исключения}
+\begin{itemize}
+    \item<1->Взимное исключение (mutual exclusion)
+    \begin{itemize}
+        \item<2->потоки всегда вызывают lock и unlock парами (сначала lock,
+             а потом unlock);
+        \item<3->не более одного потока может одновременно находиться между
+             lock-ом и unlock-ом.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Свойство взаимного исключения}
+\begin{lstlisting}
+    struct lock l;
+    int counter;
+
+    int add_one(void)
+    {
+        int res;
+
+        lock(&l);
+        res = ++counter;
+        unlock(&l);
+    }
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Свойство взаимного исключения}
+\begin{columns}
+    \begin{column}{.4\textwidth}
+        \begin{lstlisting}
+struct lock lock0;
+int counter0;
+
+int add_one0(void)
+{
+    int res;
+
+    lock(&lock0);
+    res = ++counter0;
+    unlock(&lock0);
+    return res;
+}
+        \end{lstlisting}
+    \end{column}
+    \begin{column}{.4\textwidth}
+        \begin{lstlisting}
+struct lock lock1;
+int counter1;
+
+int add_one1(void)
+{
+    int res;
+
+    lock(&lock1);
+    res = ++counter1;
+    unlock(&lock1);
+    return res;
+}
+        \end{lstlisting}
+    \end{column}
+    \begin{column}{.2\textwidth}
+    \end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Свойство живости}
+\begin{lstlisting}
+    struct lock {
+    };
+
+    void lock(struct lock *unused)
+    {
+        (void) unused;
+        while (1);
+    }
+
+    void unlock(struct lock *unused)
+    {
+        (void) unused;
+    }
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+\frametitle{Свойство живости}
+\begin{itemize}
+    \item<1->Свойство живости (deadlock freedom)
+    \begin{itemize}
+        \item<2->если один из потоков вызвал lock, то какой-то из
+             потоков вызвавших lock захватит блокировку;
+        \item<3->поток не ждет в lock, если он единственный пытается захватить
+             блокировку;
+        \item<4->если поток ждет, значит другому потоку повезло захватить
+             блокировку.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{На что нельзя полагаться?}
+\begin{itemize}
+    \item<1->Скорость работы потоков:
+    \begin{itemize}
+        \item<2->мы не знаем сколько времени потребуется потоку, чтобы
+             выполнить какой-то код;
+        \item<3->мы не можем полагать, что какой-то поток быстрее.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{На что можно полагаться?}
+\begin{itemize}
+    \item<1->Потоки работают корректно:
+    \begin{itemize}
+        \item<2->поток не находится между lock и unlock бесконечно;
+        \item<3->поток не "падает" находясь между lock и unlock;
+        \item<4->и так далее...
+    \end{itemize}
+\end{itemize}
+\end{frame}

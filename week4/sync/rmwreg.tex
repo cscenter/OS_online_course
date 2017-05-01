@@ -1,0 +1,185 @@
+\begin{frame}
+\frametitle{Атомарный Read/Modify/Write регистр}
+\begin{itemize}
+    \item<1->Атомарный RMW регистр позволяет за одну операцию
+    \begin{itemize}
+        \item<2->прочитать значение в регистре;
+        \item<3->преобразовать некоторым образом прочитанное значение;
+        \item<4->записать преобразованное значение назад.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Атомарный Read/Modify/Write регистр}
+\begin{lstlisting}
+    void atomic_rmw(int *reg, int (*f)(int))
+    {
+        const int old = *reg;
+        const int new = f(old);
+
+        *reg = new;
+        return old;
+    }
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+\frametitle{Атомарный Read/Modify/Write регистр}
+\begin{itemize}
+    \item<1->\lstinline|atomic_exchange| - возвращает старое значение,
+         записывает новое;
+    \item<2->\lstinline;atomic_fetch_\{add|sub|or|and|xor\}; - выполняет
+         арифметическое дествие над атомарным регистром;
+    \item<3->\lstinline|atomic_compare_exchange| - записывает новое значение,
+         если старое значение равно заданному.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Реализация RMW регистра}
+\begin{itemize}
+    \item<1->Архитектура может поддерживать RMW операции (x86 - одна из них)
+    \begin{itemize}
+        \item<2->\lstinline|xchg|;
+        \item<3->\lstinline|lock add|, \lstinline|lock sub|,
+             \lstinline|lock or|, \lstinline|lock and|, \lstinline|lock xor|;
+        \item<4->\lstinline|lock cmpxchg|.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Реализация RMW регистра}
+\begin{itemize}
+    \item<1->Архитектура может поддерживать LL/SC (например, ARM):
+    \begin{itemize}
+        \item<2->LL (load-link, load-linked, load-locked) - загружает значение
+             из памяти;
+        \item<3->SC (store-conditional) - записывает новое значение в ячейку,
+             но только если после LL эту ячейку никто не трогал;
+        \item<4->LL/SC идут парами и работают вместе как одна RMW операция.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Взаимное исключение с использованием RWM регистра}
+\begin{lstlisting}
+    #define LOCKED   1
+    #define UNLOCKED 0
+
+    struct lock {
+        atomic_int locked;
+    };
+
+    void lock(struct lock *lock)
+    {
+        while (atomic_exchange(&lock->locked, LOCKED) != UNLOCKED);
+    }
+
+    void unlock(struct lock *lock)
+    {
+        atomic_store(&lock->locked, UNLOCKED);
+    }
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+\frametitle{И сново про честность}
+\begin{itemize}
+    \item<1->Что если блокировка находится под нагрузкой (high contention)?
+    \begin{itemize}
+        \item<2->т. е. блокировка практически всегда занята;
+        \item<3->некоторый поток может получать CPU только когда блокировка
+             занята;
+        \item<4->такой поток будет голодать - блокировка не честная.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Ticket lock}
+\begin{lstlisting}
+    struct lock {
+        atomic_uint ticket;
+        atomic_uint next;
+    };
+
+    void lock(struct lock *lock)
+    {
+        const unsigned ticket = atomic_fetch_add(&lock->ticket, 1);
+
+        while (atomic_load(&lock->next) != ticket);
+    }
+
+    void unlock(struct lock *lock)
+    {
+        atomic_fetch_add(&lock->next, 1);
+    }
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+\frametitle{И сново о прерываниях}
+\begin{itemize}
+    \item<1->Пусть у нас есть устройство, которое получает данные из сети
+    \begin{itemize}
+        \item<2->устройство сигналит процессору - генерирует прерывание;
+        \item<3->процессор вызывает обработчик прерывания - функцию ядра ОС;
+        \item<4->обработчик прерывания должен забрать данные с устройства и
+             положить их в буфер, из которого какой-то поток сможет их забарть.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{И сново о прерываниях}
+\begin{itemize}
+    \item<1->Что если к этому буферу могут обращаться из нескольких потоков?
+    \begin{itemize}
+        \item<2->мы должны защитить буфер блокировкой;
+        \item<3->потоки и обработчики прерываний должны захватывать эту
+             блокировку перед обращением к буферу;
+        \item<4->что если обработчик прерывания устройства прервал поток,
+             который захватил блокировку?
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Deadlock}
+\begin{itemize}
+    \item<1->Прерванный поток и обработчик прерывания ждут друг друга:
+    \begin{itemize}
+        \item<2->обработчик прерывания не может захватить блокировку, потому
+             что ее держит прерванный поток;
+        \item<3->прерванный поток не получит управление, пока обработчик
+             прерывания не завершится, и не сможет отпустить блокировку.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Мораль}
+\begin{itemize}
+    \item<1->Если блокировка защищает данные, к которым обращается обработчик
+         прерывания, то нужно выключать прерывания
+    \begin{itemize}
+        \item<2->если прерывания отключены, то deadlock между обработчиком
+             прерывания и прерванным потоком не может возникнуть.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Однопроцессорные системы}
+\begin{itemize}
+    \item<1->Представим систему с всего одним ядром/процессором
+    \begin{itemize}
+        \item<2->запретив прерывания и переключение потоков мы получаем CPU в
+             монопольное пользование;
+        \item<3->все рассмотренные ранее алгоритмы просто не нужны.
+    \end{itemize}
+\end{itemize}
+\end{frame}
