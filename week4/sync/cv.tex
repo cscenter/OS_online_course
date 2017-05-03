@@ -13,7 +13,7 @@
 \begin{frame}
 \frametitle{Переменная состояния}
 \begin{itemize}
-    \item<1->Перемнная состояния (condition variable) - объект и несколько
+    \item<1->Перемeнная состояния (condition variable) - объект и несколько
          методов для работы с ним
     \begin{itemize}
         \item<2->wait - ожидает, пока кто-нибудь не просигналит;
@@ -132,8 +132,8 @@ while (... && !done)
 \begin{frame}
 \frametitle{Зачем нам цикл?}
 \begin{itemize}
-    \item<1->Spurious wakeups (ложные пробуждения) - ситуация когда wait
-         возвращает управление даже если никто не сигналил
+    \item<1->Spurious wakeups (ложные пробуждения) - ситуация, когда wait
+         возвращает управление, даже если никто не сигналил
     \begin{itemize}
         \item<2->многие реализации переменной состояния подвержены:
         \begin{itemize}

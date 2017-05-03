@@ -85,9 +85,9 @@ void thread1(void)
 \begin{frame}
 \frametitle{Deadlock}
 \begin{itemize}
-    \item<1->Как и с состоянием гонки deadlock не поддается тестированию
+    \item<1->Как и с состоянием гонки, deadlock не поддается тестированию
     \begin{itemize}
-        \item<2->появление зависит от кучи факторов;
+        \item<2->появление зависит от многих факторов;
         \item<3->входные данные, решения планировщика, прерывания,
              производительность оборудования ...
     \end{itemize}
@@ -101,7 +101,7 @@ void thread1(void)
     \begin{itemize}
         \item<2->простой случай - все блокировки известны заранее;
         \item<3->упорядочим все блокировки (например, по адресу);
-        \item<4->захватываем все блокировки только по порядку.
+        \item<4->захватываем блокировки только по порядку.
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -162,8 +162,8 @@ void thread1()
              порядку;
         \item<3->например, поток 2 хочет захватить блокировки c и a:
         \begin{itemize}
-            \item<4->так как a в алфавтие раньше c - сначала хватаем a;
-            \item<5->потом хватаем b.
+            \item<4->так как a в алфавтие раньше c, то сначала хватаем a,
+            \item<5->потом хватаем c.
         \end{itemize}
     \end{itemize}
 \end{itemize}
@@ -280,7 +280,7 @@ void thread1()
     \item<1->Wait-Die контекст состоит из:
     \begin{itemize}
         \item<2->списка захваченных блокировок;
-        \item<3->уникального "timestemp".
+        \item<3->уникального "timestamp".
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -307,11 +307,11 @@ void thread1()
 \begin{frame}
 \frametitle{Магия timestamp}
 \begin{itemize}
-    \item<1->timestamp - позволяет избегать deadlock-ов
+    \item<1->timestamp позволяет избегать deadlock-ов
     \begin{itemize}
         \item<2->храним в каждой блокировке timestamp из wdlock\_ctx, который
              использовали при захвате блокировки;
-        \item<3->при попытке захватить блокировку возможнос несколько вариантов:
+        \item<3->при попытке захватить блокировку возможно несколько вариантов:
         \begin{itemize}
             \item<4->если блокировка свободна, то пытаемся ее захватить - как
                  обычно;
@@ -327,7 +327,7 @@ void thread1()
     \item<1->Если блокировка захвачена, то нужно сравнить наш timestamp с
          сохраненным в блокировке:
     \begin{itemize}
-        \item<2->если наш timestamp меньше, чем timestamp блокировки - ждем;
+        \item<2->если наш timestamp меньше, чем timestamp блокировки, то ждем;
         \item<3->в противном случае не ждем, а возвращаем признак неудачи
              (умираем).
     \end{itemize}
@@ -337,13 +337,13 @@ void thread1()
 \begin{frame}
 \frametitle{Корректность}
 \begin{itemize}
-    \item<1->Поток ждет на блокировке, если timestamp блокировки больше
+    \item<1->Поток ждет на блокировке, если timestamp блокировки больше,
          чем timestamp потока
     \begin{itemize}
         \item<2->deadlock соответствует циклу в Wait-For графе;
         \item<3->при использовании Wait-Die timestamp-ы блокировок на любом
              пути в графе строго возрастают;
-        \item<4->следовательно цикла в Wait-For графе быть не может.
+        \item<4->следовательно, цикла в Wait-For графе быть не может.
     \end{itemize}
 \end{itemize}
 \end{frame}
