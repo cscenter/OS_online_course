@@ -238,10 +238,10 @@ void thread1()
     void wdlock_ctx_init(struct wdlock_ctx *ctx);
 
     /* This function may fail */
-    int wdlock(struct wdlock *lock, struct wdlock_ctx *ctx);
+    int wdlock_lock(struct wdlock *lock, struct wdlock_ctx *ctx);
 
     /* Unlocks all of the locks */
-    void wdunlock(struct wdlock_ctx *ctx);
+    void wdlock_unlock(struct wdlock_ctx *ctx);
 \end{lstlisting}
 \end{frame}
 
@@ -256,20 +256,20 @@ void thread1()
 
         while (1) {
             ...
-            if (!wdlock(&lock1, &ctx)) {
-                wdunlock(&ctx);
+            if (!wdlock_lock(&lock1, &ctx)) {
+                wdlock_unlock(&ctx);
                 continue;
             }
             ...
-            if (!wdlock(&lock2, &ctx)) {
-                wdunlock(&ctx);
+            if (!wdlock_lock(&lock2, &ctx)) {
+                wdlock_unlock(&ctx);
                 continue;
             }
             ...
         }
         /* Acquired all required locks successfully,
            can do something. */
-        wdunlock(&ctx);
+        wdlock_unlock(&ctx);
     }
 \end{lstlisting}
 \end{frame}
