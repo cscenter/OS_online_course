@@ -5,8 +5,7 @@ CFLAGS_getseg.o += -DDEBUG
 
 else
 
-VER = `uname -r`
-KDIR ?= "/lib/modules/${VER}/build"
+KDIR ?= /lib/modules/`uname -r`/build
 
 default:
 	$(MAKE) -C "$(KDIR)" M=$$PWD
