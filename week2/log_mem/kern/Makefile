@@ -9,7 +9,7 @@ VER = `uname -r`
 KDIR ?= "/lib/modules/${VER}/build"
 
 default:
-	$(MAKE) -C $(KDIR) M=$$PWD
+	$(MAKE) -C "$(KDIR)" M=$$PWD
 
 clean:
 	rm -rf *.o *.ko *.order *.symvers *.mod.c
