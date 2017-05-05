@@ -238,7 +238,8 @@ void thread1()
     void wdlock_ctx_init(struct wdlock_ctx *ctx);
 
     /* This function may fail */
-    int wdlock_lock(struct wdlock *lock, struct wdlock_ctx *ctx);
+    int wdlock_lock(struct wdlock *lock,
+                    struct wdlock_ctx *ctx);
 
     /* Unlocks all of the locks */
     void wdlock_unlock(struct wdlock_ctx *ctx);
