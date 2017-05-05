@@ -13,7 +13,7 @@
 \begin{frame}[fragile]
 \frametitle{Атомарный Read/Modify/Write регистр}
 \begin{lstlisting}
-    void atomic_rmw(int *reg, int (*f)(int))
+    int atomic_rmw(int *reg, int (*f)(int))
     {
         const int old = *reg;
         const int new = f(old);
