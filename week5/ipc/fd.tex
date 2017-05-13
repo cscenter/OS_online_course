@@ -1,0 +1,50 @@
+\begin{frame}
+\frametitle{Файловые дескрипторы}
+\begin{itemize}
+   \item<1->В Unix \emph{все есть файл}:
+   \begin{itemize}
+       \item<2->\emph{некоторые} ресурсы, предоставляемые ОС, имеют файловый
+            интерфейс;
+       \item<3->файловый интерфейс: read/write/close.
+   \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Файловые дескрипторы}
+\begin{itemize}
+    \item<1->Файловый дескриптор - некоторый идентификатор ресурса
+    \begin{itemize}
+        \item<2->в Unix - это обычно просто целое число;
+        \item<3->0 - стандартный поток ввода,
+        \item<3->1 - стандартный поток вывода,
+        \item<3->2 - стандартный поток ошибок.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Файловые дескрипторы}
+\begin{itemize}
+    \item<1->Способ получения дескриптора зависит от ресурса, которому он
+         соответствует:
+    \begin{itemize}
+        \item<2->для обычных файлов можно использовать open;
+        \item<3->для каналов (pipe-ов) используют pipe;
+        \item<4->есть много других функций, возвращающих файловый дескриптор.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Дублирование дескрипторов}
+\begin{itemize}
+    \item<1->Иногда вам может потребоваться управлять значением файлового
+         дескриптора
+    \begin{itemize}
+        \item<2->например, чтобы перенаправлять стандартные потоки
+             ввода/вывода в файл/из файла;
+        \item<3->для этого можно использовать вызов dup2.
+    \end{itemize}
+\end{itemize}
+\end{frame}

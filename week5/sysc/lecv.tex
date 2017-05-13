@@ -1,0 +1,40 @@
+\documentclass[12pt,t]{beamer}
+
+\setbeamersize{text margin left=0pt, text margin right=4cm}
+\hypersetup{colorlinks=true,linkcolor=red}
+\usetheme{boxes}
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian,english]{babel}
+\usepackage[T2A]{fontenc}
+\usepackage{hyperref}
+\usepackage[final]{listings}
+\usepackage{breakurl}
+\usepackage{cite}
+\usepackage{perpage}
+
+\graphicspath{{img/}}
+
+\def\Url\Breaks{\do\/\do-}
+\lstset{
+  frame=none,
+  breaklines=true,
+  basicstyle=\lst@ifdisplaystyle\tiny\fi,
+  postbreak=\raisebox{0ex}{\ensuremath{\hookrightarrow\space}},
+  numbers=left,
+  showlines=true
+}
+
+\MakePerPage{footnote}
+
+\title{Операционные Системы}
+\subtitle{Системные вызовы}
+\date{\today}
+
+\begin{document}
+
+  \begin{frame}
+    \titlepage
+  \end{frame}
+  \input{syscall}
+\end{document}

@@ -1,0 +1,97 @@
+\begin{frame}
+\frametitle{Системные вызовы}
+\begin{itemize}
+    \item<1->Какие бывают системные вызовы? Cервисы ОС:
+    \begin{itemize}
+        \item<2->работа с файловыми системами;
+        \item<3->работа со временем (текущее время, нотификации и прочее)
+        \item<4->создание, завершение и управление процессами;
+        \item<5->взаимодействие с другими процессами.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Создание процессов}
+\begin{itemize}
+    \item<1->Для создания процессов в Unix-like системах используется
+         вызов fork:
+    \begin{itemize}
+        \item<3->новый процесс является почти точной \emph{копией} родителя;
+        \item<4->вызывает fork один поток, а возвращаются из fork уже два
+             потока в двух разных процессах.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Создание процессов}
+\begin{itemize}
+    \item<1->Что если в процессе несколько потоков, и один из них вызвал fork?
+    \begin{itemize}
+        \item<2->в новом процессе будет только один поток;
+        \item<3->подумайте о блокировках в новом процессе.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Уничтожение процессов}
+\begin{itemize}
+    \item<1->Уничтожение процессов состоит из двух частей:
+    \begin{itemize}
+        \item<2->один из потоков в процессе должен вызвать exit
+        \begin{itemize}
+            \item<2->exit принимает целочисленный код как аргумент
+                 - код возврата.
+        \end{itemize}
+        \item<3->родительский процесс (родной или приемный) должен
+             дождаться завершения процесса, используя waitpid/wait
+        \begin{itemize}
+            \item<3->wait/waitpid могут вернуть код возврата, переданный в exit.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Уничтожение процессов}
+\begin{itemize}
+    \item<1->Что если в контексте процесса работают несколько потоков?
+    \begin{itemize}
+        \item<2->exit уничтожает процесс со \emph{всеми} его потоками.
+    \end{itemize}
+    \item<3->Что если родитель был уничтожен раньше ребенка?
+    \begin{itemize}
+        \item<4->другой процесс становится родителем.
+    \end{itemize}
+    \item<5->Что если не вызвать waitpid/wait?
+    \begin{itemize}
+        \item<6->процесс будет находится в состоянии Zombie, пока родитель
+             не вызовет wait/waitpid.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Запуск исполняемых файлов}
+\begin{itemize}
+    \item<1->Для запуска исполняемого файла используется один из вызовов exec*:
+    \begin{itemize}
+        \item<2->при вызове exec* ядро ОС "заменяет" старое адресное
+             пространство процесса новым;
+        \item<3->передает управление точке входа исполняемого файла (или
+             динамического компоновщика).
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Запуск исполняемых файлов}
+\begin{itemize}
+    \item<1->Что если в процессе несколько потоков и один из них вызвал exec*?
+    \begin{itemize}
+        \item<2->все другие потоки будут уничтожены.
+    \end{itemize}
+\end{itemize}
+\end{frame}

@@ -1,0 +1,73 @@
+\begin{frame}
+\frametitle{Виды IPC, которые мы не будем рассматривать}
+\begin{itemize}
+    \item<1->Сигналы.
+    \item<3->Семафоры.
+    \item<4->Сокеты.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Виды IPC, которые мы будем рассматривать}
+\begin{itemize}
+    \item<1->Каналы (неименованные каналы).
+    \item<2->FIFO (именованные каналы).
+    \item<3->Сегменты разделяемой памяти.
+    \item<4->Ptrace.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Каналы (Pipes)}
+\begin{itemize}
+    \item<1->Канал - односторонний канал связи между процессами (или внутри
+         процесса)
+    \begin{itemize}
+        \item<2->создается вызовом pipe - вызов возвращает два "файловых
+             дескриптора";
+        \item<3->через один можно писать, из другого можно читать;
+        \item<4->работа с pipe происходит почти как с обычным файлом:
+             read/write/close.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Именованные каналы (FIFO)}
+\begin{itemize}
+    \item<1->Почти как pipe, но у FIFO есть имя
+    \begin{itemize}
+        \item<2->создается с помощью специальной функции mknod;
+        \item<3->работа с FIFO происходит почти как с обычным файлом:
+             open/read/write/close;
+        \item<4->при попытке открыть FIFO поток по умолчанию блокируется,
+             пока кто-нибудь не откроет "другой конец" FIFO.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Сегменты разделяемой памяти}
+\begin{itemize}
+    \item<1->Сегмент разделяемой памяти - участок памяти, к которому можно
+         обращаться из нескольких процессов
+    \begin{itemize}
+        \item<2->создать сегмент можно с помощью shmget;
+        \item<3->получить указатель на сегмент памяти можно с помощью shmat;
+        \item<4->"закрыть" сегмент можно с помощью shmdt.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Process Trace}
+\begin{itemize}
+    \item<1->ptrace не является IPC в привычном понимании:
+    \begin{itemize}
+        \item<2->позволяет одному процессу следить за другим;
+        \item<3->позволяет одному процессу подсмотреть в память другого;
+        \item<4->позволяет одному процессу изменить память другого.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+

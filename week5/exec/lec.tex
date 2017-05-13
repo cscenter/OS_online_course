@@ -1,0 +1,40 @@
+\documentclass[handout,12pt]{beamer}
+
+\hypersetup{colorlinks=true,linkcolor=red}
+\usetheme{boxes}
+
+\usepackage[utf8]{inputenc}
+\usepackage[russian,english]{babel}
+\usepackage[T2A]{fontenc}
+\usepackage{hyperref}
+\usepackage[final]{listings}
+\usepackage{breakurl}
+\usepackage{cite}
+\usepackage{perpage}
+
+\graphicspath{{img/}}
+
+\def\Url\Breaks{\do\/\do-}
+\lstset{
+  frame=none,
+  breaklines=true,
+  basicstyle=\lst@ifdisplaystyle\tiny\fi,
+  postbreak=\raisebox{0ex}{\ensuremath{\hookrightarrow\space}},
+  numbers=left,
+  showlines=true
+}
+
+\MakePerPage{footnote}
+
+\title{Операционные Системы}
+\subtitle{Исполняемые файлы}
+\date{\today}
+
+\begin{document}
+
+  \begin{frame}
+    \titlepage
+  \end{frame}
+  \input{exe}
+  \input{dyn}
+\end{document}
