@@ -28,48 +28,21 @@ static void copy_data(pid_t pid, unsigned long addr,
 	unsigned long word;
 	const size_t word_size = sizeof(word);
 
-	const unsigned long begin = align_down(addr, word_size);
-	const unsigned long end = align_up(addr + size, word_size);
+	const size_t words = size / word_size;
+	const size_t rem = size % word_size;
 
-	/* Special case: copy a small amount of data, that fits one word */
-	if (begin + word_size == end) {
-		const size_t off = addr - begin;
+	for (size_t i = 0; i != words; ++i) {
+		memcpy(&word, data, word_size);
+		ptrace(PTRACE_POKEDATA, pid, (void *)addr, (void *)word);
 
-		word = ptrace(PTRACE_PEEKDATA, pid, (void *)begin, NULL);
-		memcpy((char *)&word + off, data, size);
-		ptrace(PTRACE_POKEDATA, pid, (void *)begin, word);
-		return;
+		addr += word_size;
+		data += word_size;
 	}
 
-	/* Copy properly word aligned portion of the data at first */
-	const unsigned long from = align_up(addr, word_size);
-	const unsigned long to = align_down(addr + size, word_size);
-
-	unsigned long off = from;
-	size_t pos = from - addr;
-
-	for (; off < to; off += word_size, pos += word_size) {
-		memcpy(&word, &data[pos], word_size);
-		ptrace(PTRACE_POKEDATA, pid, (void *)off, word);		
-	}
-
-	/* Then copy unaligned head and tail of the data */
-	if (begin != addr) {
-		const size_t head_off = addr - begin;
-		const size_t head_size = word_size - head_off;
-
-		word = ptrace(PTRACE_PEEKDATA, pid, (void *)begin, NULL);
-		memcpy((char *)&word + head_off, data, head_size);
-		ptrace(PTRACE_POKEDATA, pid, (void *)begin, word);
-	}
-
-
-	if (to != addr + size) {
-		const size_t tail_size = (addr + size) - to;
-
-		word = ptrace(PTRACE_PEEKDATA, pid, (void *)to, NULL);
-		memcpy((char *)&word, data + (size - tail_size), tail_size);
-		ptrace(PTRACE_POKEDATA, pid, (void *)to, word);
+	if (rem) {
+		word = ptrace(PTRACE_PEEKDATA, pid, (void *)addr, NULL);
+		memcpy(&word, data, rem);
+		ptrace(PTRACE_POKEDATA, pid, (void *)addr, (void *)word);
 	}
 }
 
