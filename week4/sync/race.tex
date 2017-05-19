@@ -11,7 +11,7 @@ counter:
 add_one:
     movq counter, %rax
     inc %rax
-    movq rax, counter
+    movq %rax, counter
     retq
             \end{lstlisting}
         \end{column}
