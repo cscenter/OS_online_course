@@ -39,7 +39,7 @@ static int pt_shift(int lvl)
 
 static int pt_offs(uintptr_t addr, int lvl)
 {
-	static const int mask[] = {0, 0xfff, 0x1ff, 0x1ff, 0x1ff};
+	static const int mask[] = {0xfff, 0x1ff, 0x1ff, 0x1ff, 0x1ff};
 
 	return (addr >> pt_shift(lvl)) & mask[lvl];
 }
