@@ -93,10 +93,13 @@ static int decode_format(const char **fmt_ptr)
 		switch ((c = *fmt++)) {
 		case 'p':
 			spec |= FMT_LONG;
+			// fallthrough
 		case 'x': case 'X': case 'o':
 			spec |= c == 'o' ? FMT_OCT : FMT_HEX;
+			// fallthrough
 		case 'u':
 			spec |= FMT_UNSIGNED;
+			// fallthrough
 		case 'd': case 'i':
 			type = FMT_INT;
 			break;
