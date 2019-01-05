@@ -7,20 +7,7 @@
 
 
 static const uint32_t TIMER_PERIODIC = (1 << 17);
-static const uint32_t TIMER_ONESHOT = (0 << 17);
-static const uint32_t TIMER_MASK = (1 << 16);
-
-
-static const uint32_t TIMER_DIV1 = 11;
-static const uint32_t TIMER_DIV2 = 0;
-static const uint32_t TIMER_DIV4 = 1;
-static const uint32_t TIMER_DIV8 = 2;
-static const uint32_t TIMER_DIV16 = 3;
-static const uint32_t TIMER_DIV32 = 8;
-static const uint32_t TIMER_DIV64 = 9;
 static const uint32_t TIMER_DIV128 = 10;
-
-
 static const uint32_t TIMER_INIT = 262144;
 
 
